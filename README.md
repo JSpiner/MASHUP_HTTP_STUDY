@@ -11,7 +11,7 @@
 <br/><br/>
 ![download](./img/download.png)<br/>
 오른쪽 다운로드 버튼을 눌러주세요!<br/>
-`Download ZIP`을 누르시면 됩니다<br/>!
+`Download ZIP`을 누르시면 됩니다!<br/>
 (git을 사용할줄 아시는분은 clone 하시면 더 좋아요 :+1:)
 
 ## 스터디가 끝난후
