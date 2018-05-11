@@ -17,6 +17,8 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -173,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
         setDustDisplayText("미세먼지 최악");
         setStatusFaceImage(R.drawable.face_angry);
         setDustValue(dust);
+        setLastUpdateDate();
     }
 
     private void setSoSoWeatherState(double dust) {
@@ -181,6 +184,7 @@ public class MainActivity extends AppCompatActivity {
         setDustDisplayText("미세먼지 나쁨");
         setStatusFaceImage(R.drawable.face_soso);
         setDustValue(dust);
+        setLastUpdateDate();
     }
 
     private void setNormalWeatherState(double dust) {
@@ -189,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
         setDustDisplayText("미세먼지 보통");
         setStatusFaceImage(R.drawable.face_happy);
         setDustValue(dust);
+        setLastUpdateDate();
     }
 
     private void setErrorState() {
@@ -197,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
         setDustDisplayText("통신 에러");
         setStatusFaceImage(R.drawable.face_down);
         setDustValue(0);
+        setLastUpdateDate();
     }
 
     private void setRootBackgroundColor(@ColorRes int colorResId) {
@@ -218,6 +224,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void setDustValue(double dust) {
         ((TextView) findViewById(R.id.dust)).setText(String.valueOf(dust));
+    }
+
+    private void setLastUpdateDate() {
+        Date nowDate = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("마지막 업데이트 : yyyy-MM-dd HH:mm:ss");
+        ((TextView) findViewById(R.id.date)).setText(
+                format.format(nowDate)
+        );
     }
 
 
