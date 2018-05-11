@@ -3,4 +3,8 @@
     <color name="colorPrimary">#c88bd4</color>
     <color name="colorPrimaryDark">#701d98</color>
     <color name="colorAccent">#ff6e9e</color>
+
+    <!-- 매우 나쁨 -->
+    <color name="colorBad">#d33a15</color>
+    <color name="colorBadDark">#b72f0f</color>
 </resources>
