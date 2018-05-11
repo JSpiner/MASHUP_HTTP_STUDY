@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.io.IOException;
 
 import okhttp3.Call;
@@ -98,7 +100,17 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        onRequestSuccess(response);
+                        Log.i("TAG", "status : " + response.code());
+                        switch (response.code()) {
+                            case 200:
+                                onRequestSuccess(response);
+                                break;
+                            case 500:
+                                onRequestFailure(new RuntimeException("Network 에러"));
+                                break;
+                            default:
+                                onRequestFailure(new RuntimeException("Network 에러"));
+                        }
                     }
                 }
         );
@@ -107,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void onRequestFailure(Exception error) {
         error.printStackTrace();
-
         runOnUiThread(
                 new Runnable() {
                     @Override
@@ -118,8 +129,34 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-    private void onRequestSuccess(Response response) {
+    private void onRequestSuccess(Response response) throws IOException {
+        String rawText = response.body().string();
+        Log.i("TAG", "treXt : " + rawText);
+        WeatherInfo weatherInfo = new Gson().fromJson(
+                rawText,
+                WeatherInfo.class
+        );
 
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                onWeatherInfoResponse(weatherInfo);
+            }
+        });
+    }
+
+    private void onWeatherInfoResponse(WeatherInfo weatherInfo) {
+        double dust = weatherInfo.weather.dust;
+
+        if (dust >= 60) {
+            setBadWeatherState(dust);
+        }
+        else if (dust >= 30) {
+            setSoSoWeatherState(dust);
+        }
+        else {
+            setNormalWeatherState(dust);
+        }
     }
 
     private double getCurrentLat() {
@@ -130,25 +167,28 @@ public class MainActivity extends AppCompatActivity {
         return FAKE_LOCATION_LNG;
     }
 
-    private void setBadWeatherState() {
+    private void setBadWeatherState(double dust) {
         setRootBackgroundColor(R.color.colorBad);
         setStatusBarColor(R.color.colorBadDark);
         setDustDisplayText("미세먼지 최악");
         setStatusFaceImage(R.drawable.face_angry);
+        setDustValue(dust);
     }
 
-    private void setSoSoWeatherState() {
+    private void setSoSoWeatherState(double dust) {
         setRootBackgroundColor(R.color.colorSoSo);
         setStatusBarColor(R.color.colorSoSoDark);
         setDustDisplayText("미세먼지 나쁨");
         setStatusFaceImage(R.drawable.face_soso);
+        setDustValue(dust);
     }
 
-    private void setNormalWeatherState() {
+    private void setNormalWeatherState(double dust) {
         setRootBackgroundColor(R.color.colorNormal);
         setStatusBarColor(R.color.colorNormalDark);
         setDustDisplayText("미세먼지 보통");
         setStatusFaceImage(R.drawable.face_happy);
+        setDustValue(dust);
     }
 
     private void setErrorState() {
@@ -156,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
         setStatusBarColor(R.color.colorErrorDark);
         setDustDisplayText("통신 에러");
         setStatusFaceImage(R.drawable.face_down);
+        setDustValue(0);
     }
 
     private void setRootBackgroundColor(@ColorRes int colorResId) {
@@ -167,12 +208,16 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-    private void setDustDisplayText(String text){
-        ((TextView)findViewById(R.id.dust_display)).setText(text);
+    private void setDustDisplayText(String text) {
+        ((TextView) findViewById(R.id.dust_display)).setText(text);
     }
 
-    private void setStatusFaceImage(@DrawableRes int drawableResId){
-        ((ImageView)findViewById(R.id.dust_display_image)).setImageResource(drawableResId);
+    private void setStatusFaceImage(@DrawableRes int drawableResId) {
+        ((ImageView) findViewById(R.id.dust_display_image)).setImageResource(drawableResId);
+    }
+
+    private void setDustValue(double dust) {
+        ((TextView) findViewById(R.id.dust)).setText(String.valueOf(dust));
     }
 
 

@@ -16,6 +16,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -34,5 +38,8 @@ dependencies {
 
     // network library
     compile 'com.squareup.okhttp3:okhttp:3.10.0'
+
+    // parsing library
+    compile 'com.google.code.gson:gson:2.8.4'
 
 }
