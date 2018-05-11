@@ -14,18 +14,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,12 +52,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        findViewById(R.id.refresh).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                loadWeatherInfo();
-            }
-        });
+
     }
 
     private void loadWeatherInfo() {
@@ -82,40 +68,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void requestWeatherInfo(double lat, double lng) throws Exception {
-        OkHttpClient client = new OkHttpClient();
-
-        HttpUrl httpUrl = HttpUrl.parse(API_URL).newBuilder()
-                .addQueryParameter("lat", String.valueOf(lat))
-                .addQueryParameter("lng", String.valueOf(lng))
-                .build();
-
-        Request request = new Request.Builder()
-                .url(httpUrl)
-                .build();
-
-        client.newCall(request).enqueue(
-                new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
-                        onRequestFailure(e);
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        Log.i("TAG", "status : " + response.code());
-                        switch (response.code()) {
-                            case 200:
-                                onRequestSuccess(response);
-                                break;
-                            case 500:
-                                onRequestFailure(new RuntimeException("Network 에러"));
-                                break;
-                            default:
-                                onRequestFailure(new RuntimeException("Network 에러"));
-                        }
-                    }
-                }
-        );
+       throw new RuntimeException("구현해주세요!");
 
     }
 
@@ -131,34 +84,8 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
-    private void onRequestSuccess(Response response) throws IOException {
-        String rawText = response.body().string();
-        Log.i("TAG", "treXt : " + rawText);
-        WeatherInfo weatherInfo = new Gson().fromJson(
-                rawText,
-                WeatherInfo.class
-        );
+    private void onRequestSuccess(Object response) throws IOException {
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                onWeatherInfoResponse(weatherInfo);
-            }
-        });
-    }
-
-    private void onWeatherInfoResponse(WeatherInfo weatherInfo) {
-        double dust = weatherInfo.weather.dust;
-
-        if (dust >= 60) {
-            setBadWeatherState(dust);
-        }
-        else if (dust >= 30) {
-            setSoSoWeatherState(dust);
-        }
-        else {
-            setNormalWeatherState(dust);
-        }
     }
 
     private double getCurrentLat() {

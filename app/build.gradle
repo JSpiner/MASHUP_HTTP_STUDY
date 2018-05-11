@@ -36,10 +36,4 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    // network library
-    compile 'com.squareup.okhttp3:okhttp:3.10.0'
-
-    // parsing library
-    compile 'com.google.code.gson:gson:2.8.4'
-
 }
