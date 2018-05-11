@@ -7,4 +7,17 @@
     <!-- 매우 나쁨 -->
     <color name="colorBad">#d33a15</color>
     <color name="colorBadDark">#b72f0f</color>
+    
+    <!-- 보통 -->
+    <color name="colorSoSo">#ed6004</color>
+    <color name="colorSoSoDark">#e97c5c</color>
+
+    <!-- 좋음 -->
+    <color name="colorNormal">#006cb5</color>
+    <color name="colorNormalDark">#004b8e</color>
+
+    <!-- 에러 -->
+    <color name="colorError">#1e1e1e</color>
+    <color name="colorErrorDark">#000000</color>
+    
 </resources>

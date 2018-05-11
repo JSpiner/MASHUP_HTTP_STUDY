@@ -1,9 +1,17 @@
 package kr.mash_up;
 
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
+import android.support.annotation.DrawableRes;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -36,6 +44,18 @@ public class MainActivity extends AppCompatActivity {
         loadWeatherInfo();
     }
 
+    protected void setStatusBarColor(@ColorRes int colorResId) {
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.setStatusBarColor(
+                ContextCompat.getColor(
+                        getBaseContext(),
+                        colorResId
+                )
+        );
+    }
+
     private void initViews() {
         findViewById(R.id.refresh).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
             );
         } catch (Exception exception) {
             exception.printStackTrace();
+            setErrorState();
         }
     }
 
@@ -72,16 +93,32 @@ public class MainActivity extends AppCompatActivity {
                 new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        e.printStackTrace();
-                        Log.i("TAG", "fail : " + e.getMessage());
+                        onRequestFailure(e);
                     }
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        Log.i("TAG", "body : " + response.body().string());
+                        onRequestSuccess(response);
                     }
                 }
         );
+
+    }
+
+    private void onRequestFailure(Exception error) {
+        error.printStackTrace();
+
+        runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        setErrorState();
+                    }
+                }
+        );
+    }
+
+    private void onRequestSuccess(Response response) {
 
     }
 
@@ -92,5 +129,51 @@ public class MainActivity extends AppCompatActivity {
     private double getCurrentLng() {
         return FAKE_LOCATION_LNG;
     }
+
+    private void setBadWeatherState() {
+        setRootBackgroundColor(R.color.colorBad);
+        setStatusBarColor(R.color.colorBadDark);
+        setDustDisplayText("미세먼지 최악");
+        setStatusFaceImage(R.drawable.face_angry);
+    }
+
+    private void setSoSoWeatherState() {
+        setRootBackgroundColor(R.color.colorSoSo);
+        setStatusBarColor(R.color.colorSoSoDark);
+        setDustDisplayText("미세먼지 나쁨");
+        setStatusFaceImage(R.drawable.face_soso);
+    }
+
+    private void setNormalWeatherState() {
+        setRootBackgroundColor(R.color.colorNormal);
+        setStatusBarColor(R.color.colorNormalDark);
+        setDustDisplayText("미세먼지 보통");
+        setStatusFaceImage(R.drawable.face_happy);
+    }
+
+    private void setErrorState() {
+        setRootBackgroundColor(R.color.colorError);
+        setStatusBarColor(R.color.colorErrorDark);
+        setDustDisplayText("통신 에러");
+        setStatusFaceImage(R.drawable.face_down);
+    }
+
+    private void setRootBackgroundColor(@ColorRes int colorResId) {
+        findViewById(R.id.root).setBackgroundColor(
+                ContextCompat.getColor(
+                        getBaseContext(),
+                        colorResId
+                )
+        );
+    }
+
+    private void setDustDisplayText(String text){
+        ((TextView)findViewById(R.id.dust_display)).setText(text);
+    }
+
+    private void setStatusFaceImage(@DrawableRes int drawableResId){
+        ((ImageView)findViewById(R.id.dust_display_image)).setImageResource(drawableResId);
+    }
+
 
 }
